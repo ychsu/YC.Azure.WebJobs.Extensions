@@ -1,15 +1,15 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <Authors>ychsu.tw</Authors>
-    <Description>輸出至EntityFramwork, 寫入資料庫</Description>
+    <Description>傳送通知到 azure notification hub</Description>
     <PackageProjectUrl>https://github.com/ychsu/YC.Azure.WebJobs.Extensions</PackageProjectUrl>
     <RepositoryUrl>https://github.com/ychsu/YC.Azure.WebJobs.Extensions</RepositoryUrl>
-    <Product>YC.Azure.WebJobs.Extensions.EntityFrameworkCore</Product>
-    <PackageId>YC.Azure.WebJobs.Extensions.EntityFrameworkCore</PackageId>
+    <Product>YC.Azure.WebJobs.Extensions.NotificationHub</Product>
+    <PackageId>YC.Azure.WebJobs.Extensions.NotificationHub</PackageId>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <PackageReleaseNotes>輸出至EntityFramwork, 寫入資料庫</PackageReleaseNotes>
+    <PackageReleaseNotes>傳送通知到 azure notification hub</PackageReleaseNotes>
     <Version>1.0.0</Version>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <Company>ychsu.tw</Company>
@@ -17,8 +17,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.1.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="4.0.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.5" />
   </ItemGroup>
 
   <ItemGroup>
