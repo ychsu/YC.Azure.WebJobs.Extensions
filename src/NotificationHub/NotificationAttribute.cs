@@ -8,8 +8,23 @@ namespace YC.Azure.WebJobs.Extensions.NotificationHub
     [Binding]
     public class NotificationAttribute : Attribute, IConnectionProvider
     {
+        public NotificationAttribute()
+        {
+            
+        }
+
+        public NotificationAttribute(bool isSendWhenAdd)
+        {
+            IsSendWhenAdd = isSendWhenAdd;
+        }
+        
         public string Connection { get; set; }
 
         public string HubName { get; set; }
+
+        /// <summary>
+        /// get or set is send notification to azure notification hub when add
+        /// </summary>
+        public bool? IsSendWhenAdd { get; set; }
     }
 }

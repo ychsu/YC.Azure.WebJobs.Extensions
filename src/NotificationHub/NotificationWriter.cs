@@ -10,38 +10,51 @@ namespace YC.Azure.WebJobs.Extensions.NotificationHub
     internal class NotificationWriter : IAsyncCollector<NotificationMessage>
     {
         private readonly INotificationHubClient _hubClient;
+        private readonly bool _isSendWhenAdd;
         private readonly ConcurrentQueue<NotificationMessage> _queue;
 
-        public NotificationWriter(INotificationHubClient hubClient)
+        public NotificationWriter(INotificationHubClient hubClient, bool isSendWhenAdd)
         {
             _hubClient = hubClient ?? throw new ArgumentNullException(nameof(hubClient));
+            _isSendWhenAdd = isSendWhenAdd;
             _queue = new ConcurrentQueue<NotificationMessage>();
         }
 
-        public Task AddAsync(NotificationMessage item, CancellationToken cancellationToken = new CancellationToken())
+        public async Task AddAsync(NotificationMessage item, CancellationToken cancellationToken = new CancellationToken())
         {
-            _queue.Enqueue(item);
-            return Task.CompletedTask;
+            if (_isSendWhenAdd)
+            {
+                await SendNotificationAsync(item, cancellationToken);
+            }
+            else
+            {
+                _queue.Enqueue(item);   
+            }
         }
 
         public async Task FlushAsync(CancellationToken cancellationToken = new CancellationToken())
         {
             while (_queue.TryDequeue(out var message))
             {
-                Notification msg = message.Platform switch
-                {
-                    Platform.Fcm => new FcmNotification(message.Payload),
-                    Platform.Apple => new AppleNotification(message.Payload),
-                    _ => throw new ArgumentOutOfRangeException()
-                };
-                try
-                {
-                    await _hubClient.SendNotificationAsync(msg, message.TagExpression, cancellationToken);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
+                await SendNotificationAsync(message, cancellationToken);
+            }
+        }
+
+        private async Task SendNotificationAsync(NotificationMessage message, CancellationToken cancellationToken)
+        {
+            Notification msg = message.Platform switch
+            {
+                Platform.Fcm => new FcmNotification(message.Payload),
+                Platform.Apple => new AppleNotification(message.Payload),
+                _ => throw new ArgumentOutOfRangeException()
+            };
+            try
+            {
+                await _hubClient.SendNotificationAsync(msg, message.TagExpression, cancellationToken);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
             }
         }
     }

@@ -26,9 +26,10 @@ namespace YC.Azure.WebJobs.Extensions.NotificationHub
         {
             var connectionString = _configuration.GetWebJobsConnectionString(attr.Connection ?? "NotificationHub");
             var hubName = attr.HubName ?? _configuration.GetValue<string>("NotificationHubName");
+            var isSendWhenAdd = attr.IsSendWhenAdd ?? _configuration.GetValue<bool>("NotificationSendWhenAdd");
             var client = NotificationHubClient.CreateClientFromConnectionString(
                 connectionString, hubName);
-            return new NotificationWriter(client);
+            return new NotificationWriter(client, isSendWhenAdd);
         }
     }
 }
