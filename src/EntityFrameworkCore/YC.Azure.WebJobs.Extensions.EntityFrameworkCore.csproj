@@ -10,12 +10,12 @@
     <PackageId>YC.Azure.WebJobs.Extensions.EntityFrameworkCore</PackageId>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <PackageReleaseNotes>Collectior Add 改用 Set&lt;T&gt;().AddAsync()</PackageReleaseNotes>
-    <Version>1.1.3</Version>
+    <Version>1.1.4</Version>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <Company>ychsu.tw</Company>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <AssemblyVersion>1.1.3</AssemblyVersion>
-    <FileVersion>1.1.3</FileVersion>
+    <AssemblyVersion>1.1.4</AssemblyVersion>
+    <FileVersion>1.1.4</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
