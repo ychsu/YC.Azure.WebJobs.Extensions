@@ -5,6 +5,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Internal;
 using YC.Azure.WebJobs.Extensions.EntityFrameworkCore;
 using YC.Azure.WebJobs.Extensions.NotificationHub;
+using YC.Azure.WebJobs.Extensions.WorkdayTimers;
 
 namespace WebJobSample
 {
@@ -20,6 +21,7 @@ namespace WebJobSample
                     b.AddTimers();
                     b.AddNotificationHub();
                     b.AddEntityFrameworkCore();
+                    b.AddWorkdaysTimers<MyWorkdayFilter>();
                 })
                 .ConfigureServices((context, services) =>
                 {

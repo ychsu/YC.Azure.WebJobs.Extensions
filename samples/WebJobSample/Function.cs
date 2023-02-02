@@ -1,6 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using YC.Azure.WebJobs.Extensions.NotificationHub;
+using YC.Azure.WebJobs.Extensions.WorkdayTimers;
 
 namespace WebJobSample
 {
@@ -81,6 +83,11 @@ namespace WebJobSample
                 Payload = @"{ ""aps"": { ""alert"": ""test"" } }",
                 TagExpression = "en"
             });
+        }
+
+        public void WorkdayTriggered([WorkdayTimerTrigger("0 16 13 * * *")] TimerInfo timerInfo)
+        {
+            Console.WriteLine(timerInfo.FormatNextOccurrences(14));
         }
     }
 }
