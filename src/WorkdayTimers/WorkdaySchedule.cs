@@ -5,14 +5,16 @@ namespace YC.Azure.WebJobs.Extensions.WorkdayTimers
 {
     public class WorkdaySchedule : TimerSchedule
     {
-        private readonly IWorkdayFilter _workdayFilter;
         private readonly TimerSchedule _innerSchedule;
+        private readonly IWorkdayFilter _workdayFilter;
 
         public WorkdaySchedule(IWorkdayFilter workdayFilter, TimerSchedule innerSchedule)
         {
             _workdayFilter = workdayFilter ?? throw new ArgumentNullException(nameof(workdayFilter));
             _innerSchedule = innerSchedule ?? throw new ArgumentNullException(nameof(innerSchedule));
         }
+
+        public override bool AdjustForDST => _innerSchedule.AdjustForDST;
 
         public override DateTime GetNextOccurrence(DateTime now)
         {
@@ -24,7 +26,5 @@ namespace YC.Azure.WebJobs.Extensions.WorkdayTimers
 
             return next;
         }
-
-        public override bool AdjustForDST => _innerSchedule.AdjustForDST;
     }
 }

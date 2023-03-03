@@ -9,6 +9,7 @@ namespace YC.Azure.WebJobs.Extensions.EntityFrameworkCore
     {
         private readonly INameResolver _nameResolver;
         private readonly IServiceProvider _serviceProvider;
+
         public EntityFrameworkExtensionConfigProvider(INameResolver nameResolver, IServiceProvider serviceProvider)
         {
             _nameResolver = nameResolver ?? throw new ArgumentNullException(nameof(nameResolver));

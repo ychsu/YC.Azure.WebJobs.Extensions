@@ -5,7 +5,7 @@ namespace YC.Azure.WebJobs.Extensions.WorkdayTimers
 {
     [AttributeUsage(AttributeTargets.Parameter)]
     [Binding]
-    public class WorkdayTimerTriggerAttribute : Attribute 
+    public class WorkdayTimerTriggerAttribute : Attribute
     {
         public WorkdayTimerTriggerAttribute(string scheduleExpression)
         {
@@ -14,17 +14,17 @@ namespace YC.Azure.WebJobs.Extensions.WorkdayTimers
         }
 
         /// <summary>
-        /// Gets the schedule expression.
+        ///     Gets the schedule expression.
         /// </summary>
-        public string ScheduleExpression { get; private set; }
+        public string ScheduleExpression { get; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the schedule should be monitored.
-        /// Schedule monitoring persists schedule occurrences to aid in ensuring the
-        /// schedule is maintained correctly even when roles restart.
-        /// If not set explicitly, this will default to true for schedules that have a recurrence
-        /// interval greater than 1 minute (i.e., for schedules that occur more than once
-        /// per minute, persistence will be disabled).
+        ///     Gets or sets a value indicating whether the schedule should be monitored.
+        ///     Schedule monitoring persists schedule occurrences to aid in ensuring the
+        ///     schedule is maintained correctly even when roles restart.
+        ///     If not set explicitly, this will default to true for schedules that have a recurrence
+        ///     interval greater than 1 minute (i.e., for schedules that occur more than once
+        ///     per minute, persistence will be disabled).
         /// </summary>
         public bool UseMonitor { get; set; }
     }

@@ -1,35 +1,35 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
-    <Authors>ychsu.tw</Authors>
-    <Description>輸出至EntityFramwork, 寫入資料庫</Description>
-    <PackageProjectUrl>https://github.com/ychsu/YC.Azure.WebJobs.Extensions</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/ychsu/YC.Azure.WebJobs.Extensions</RepositoryUrl>
-    <Product>YC.Azure.WebJobs.Extensions.EntityFrameworkCore</Product>
-    <PackageId>YC.Azure.WebJobs.Extensions.EntityFrameworkCore</PackageId>
-    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <PackageReleaseNotes>Collectior Add 改用 Set&lt;T&gt;().AddAsync()</PackageReleaseNotes>
-    <Version>1.1.4</Version>
-    <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
-    <Company>ychsu.tw</Company>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <AssemblyVersion>1.1.4</AssemblyVersion>
-    <FileVersion>1.1.4</FileVersion>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <Authors>ychsu.tw</Authors>
+        <Description>輸出至EntityFramwork, 寫入資料庫</Description>
+        <PackageProjectUrl>https://github.com/ychsu/YC.Azure.WebJobs.Extensions</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/ychsu/YC.Azure.WebJobs.Extensions</RepositoryUrl>
+        <Product>YC.Azure.WebJobs.Extensions.EntityFrameworkCore</Product>
+        <PackageId>YC.Azure.WebJobs.Extensions.EntityFrameworkCore</PackageId>
+        <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+        <PackageReleaseNotes>Collectior Add 改用 Set&lt;T&gt;().AddAsync()</PackageReleaseNotes>
+        <Version>1.1.5</Version>
+        <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+        <Company>ychsu.tw</Company>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <AssemblyVersion>1.1.5</AssemblyVersion>
+        <FileVersion>1.1.5</FileVersion>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="4.0.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.5" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="4.0.1"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.5"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <None Include="..\..\LICENSE">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-    <None Include="README.md" Pack="true" PackagePath="\" />
-  </ItemGroup>
+    <ItemGroup>
+        <None Include="..\..\LICENSE">
+            <Pack>True</Pack>
+            <PackagePath></PackagePath>
+        </None>
+        <None Include="README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
 
 </Project>

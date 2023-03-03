@@ -9,11 +9,11 @@ namespace YC.Azure.WebJobs.Extensions.WorkdayTimers
 {
     internal class WorkdayTimersExtensionConfigProvider : IExtensionConfigProvider
     {
-        private readonly IOptions<WorkdayTimersOptions> _options;
-        private readonly IWorkdayFilter _workdayFilter;
         private readonly ILoggerFactory _loggerFactory;
         private readonly INameResolver _nameResolver;
+        private readonly IOptions<WorkdayTimersOptions> _options;
         private readonly ScheduleMonitor _scheduleMonitor;
+        private readonly IWorkdayFilter _workdayFilter;
 
         public WorkdayTimersExtensionConfigProvider(IOptions<WorkdayTimersOptions> options,
             IWorkdayFilter workdayFilter,

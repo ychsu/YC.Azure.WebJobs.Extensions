@@ -7,7 +7,7 @@ namespace YC.Azure.WebJobs.Extensions.NotificationHub
         public static IWebJobsBuilder AddNotificationHub(this IWebJobsBuilder builder)
         {
             builder.AddExtension<NotificationHubExtensionConfigProvider>();
-            
+
             return builder;
         }
     }

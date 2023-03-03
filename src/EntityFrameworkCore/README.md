@@ -1,11 +1,15 @@
 ## YC.Azure.WebJobs.Extensions.EntityFrameworkCore
+
 ### Installation
+
 Nuget
+
 ```
 Install-Package YC.Azure.WebJobs.Extensions.EntityFrameworkCore
 ```
 
 dotnet cli
+
 ```
 dotnet add package YC.Azure.WebJobs.Extensions.EntityFrameworkCore
 ```
@@ -13,6 +17,7 @@ dotnet add package YC.Azure.WebJobs.Extensions.EntityFrameworkCore
 ### Using the binding
 
 #### Configure
+
 ```csharp
 var builder = new HostBuilder();
 builder
@@ -37,6 +42,7 @@ using (host)
 ```
 
 #### Output binding samples with timer trigger
+
 ```csharp
 public async Task Test([TimerTrigger("*/5 * * * * *")] TimerInfo info,
 	[DbSet(typeof(DemoContext))] IAsyncCollector<Todo> collector)

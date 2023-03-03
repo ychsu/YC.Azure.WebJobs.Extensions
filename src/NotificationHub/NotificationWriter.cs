@@ -20,24 +20,18 @@ namespace YC.Azure.WebJobs.Extensions.NotificationHub
             _queue = new ConcurrentQueue<NotificationMessage>();
         }
 
-        public async Task AddAsync(NotificationMessage item, CancellationToken cancellationToken = new CancellationToken())
+        public async Task AddAsync(NotificationMessage item,
+            CancellationToken cancellationToken = new CancellationToken())
         {
             if (_isSendWhenAdd)
-            {
                 await SendNotificationAsync(item, cancellationToken);
-            }
             else
-            {
-                _queue.Enqueue(item);   
-            }
+                _queue.Enqueue(item);
         }
 
         public async Task FlushAsync(CancellationToken cancellationToken = new CancellationToken())
         {
-            while (_queue.TryDequeue(out var message))
-            {
-                await SendNotificationAsync(message, cancellationToken);
-            }
+            while (_queue.TryDequeue(out var message)) await SendNotificationAsync(message, cancellationToken);
         }
 
         private async Task SendNotificationAsync(NotificationMessage message, CancellationToken cancellationToken)

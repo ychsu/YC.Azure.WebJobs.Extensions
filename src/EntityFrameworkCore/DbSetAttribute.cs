@@ -11,7 +11,7 @@ namespace YC.Azure.WebJobs.Extensions.EntityFrameworkCore
         {
             ContextType = contextType;
         }
-		
-        public Type ContextType {get; set;}
+
+        public Type ContextType { get; set; }
     }
 }

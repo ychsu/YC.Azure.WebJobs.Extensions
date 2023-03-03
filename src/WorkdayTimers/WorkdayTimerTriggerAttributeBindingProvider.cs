@@ -13,11 +13,11 @@ namespace YC.Azure.WebJobs.Extensions.WorkdayTimers
 {
     internal class WorkdayTimerTriggerAttributeBindingProvider : ITriggerBindingProvider
     {
-        private readonly WorkdayTimersOptions _options;
-        private readonly IWorkdayFilter _workdayFilter;
-        private readonly INameResolver _nameResolver;
         private readonly ILogger _logger;
+        private readonly INameResolver _nameResolver;
+        private readonly WorkdayTimersOptions _options;
         private readonly ScheduleMonitor _scheduleMonitor;
+        private readonly IWorkdayFilter _workdayFilter;
 
         public WorkdayTimerTriggerAttributeBindingProvider(WorkdayTimersOptions options,
             IWorkdayFilter workdayFilter,
@@ -35,14 +35,12 @@ namespace YC.Azure.WebJobs.Extensions.WorkdayTimers
         public Task<ITriggerBinding> TryCreateAsync(TriggerBindingProviderContext context)
         {
             var parameter = context.Parameter;
-            var attribute = parameter.GetCustomAttribute<WorkdayTimerTriggerAttribute>(inherit: false);
+            var attribute = parameter.GetCustomAttribute<WorkdayTimerTriggerAttribute>(false);
             if (attribute is null) return Task.FromResult<ITriggerBinding>(null);
 
             if (parameter.ParameterType != typeof(TimerInfo))
-            {
                 throw new InvalidOperationException(
                     $"Can't bind WorkdayTimerTriggerAttribute to type '{parameter.ParameterType}'.");
-            }
 
             var schedule = CreateSchedule(attribute);
 
@@ -66,16 +64,11 @@ namespace YC.Azure.WebJobs.Extensions.WorkdayTimers
             if (TryParseCronSchedule(resolvedExpression, ref schedule, out var crontabSchedule))
             {
                 if (attribute.UseMonitor && ShouldDisableScheduleMonitor(crontabSchedule, DateTime.Now))
-                {
                     attribute.UseMonitor = false;
-                }
             }
             else if (TryParseConstantSchedule(resolvedExpression, ref schedule, out var periodTimespan))
             {
-                if (attribute.UseMonitor && periodTimespan.TotalMinutes < 1)
-                {
-                    attribute.UseMonitor = false;
-                }
+                if (attribute.UseMonitor && periodTimespan.TotalMinutes < 1) attribute.UseMonitor = false;
             }
 
             return schedule;

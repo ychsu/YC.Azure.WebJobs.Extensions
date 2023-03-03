@@ -8,24 +8,28 @@ using Microsoft.Azure.WebJobs.Extensions.Timers;
 using Microsoft.Azure.WebJobs.Host.Executors;
 using Microsoft.Azure.WebJobs.Host.Listeners;
 using Microsoft.Extensions.Logging;
+using Timer = System.Timers.Timer;
 
 namespace YC.Azure.WebJobs.Extensions.WorkdayTimers
 {
+    [Singleton(Mode = SingletonMode.Listener)]
     internal class WorkdayTimerListener : IListener
     {
         public const string UnscheduledInvocationReasonKey = "UnscheduledInvocationReason";
         public const string OriginalScheduleKey = "OriginalSchedule";
-        private readonly string _timerLookupName;
-        private readonly WorkdayTimersOptions _options;
-        private readonly ITriggeredFunctionExecutor _executor;
-        private readonly ILogger _logger;
-        private readonly CancellationTokenSource _cancellationTokenSource;
-        private readonly TimerSchedule _schedule;
-        private readonly string _functionLogName;
-        private System.Timers.Timer _timer;
-        private readonly SemaphoreSlim _invocationLock = new SemaphoreSlim(1, 1);
         private static readonly TimeSpan MaxTimerInterval = TimeSpan.FromDays(24);
+        private readonly CancellationTokenSource _cancellationTokenSource;
+        private readonly ITriggeredFunctionExecutor _executor;
+        private readonly string _functionLogName;
+        private readonly SemaphoreSlim _invocationLock = new SemaphoreSlim(1, 1);
+        private readonly ILogger _logger;
+        private readonly WorkdayTimersOptions _options;
+        private readonly TimerSchedule _schedule;
+        private readonly string _timerLookupName;
+
+        private bool _disposed;
         private TimeSpan _remainingInterval;
+        private Timer _timer;
 
         public WorkdayTimerListener(WorkdayTimerTriggerAttribute attribute,
             TimerSchedule schedule,
@@ -51,7 +55,7 @@ namespace YC.Azure.WebJobs.Extensions.WorkdayTimers
         internal ScheduleMonitor ScheduleMonitor { get; set; }
 
         /// <summary>
-        /// When set, we have a startup invocation that needs to happen immediately.
+        ///     When set, we have a startup invocation that needs to happen immediately.
         /// </summary>
         internal StartupInvocationContext StartupInvocation { get; set; }
 
@@ -59,9 +63,7 @@ namespace YC.Azure.WebJobs.Extensions.WorkdayTimers
         {
             ThrowIfDisposed();
             if (_timer is {Enabled: true})
-            {
                 throw new InvalidOperationException("The listener has already been started.");
-            }
 
             // if schedule monitoring is enabled, record (or initialize)
             // the current schedule status
@@ -82,14 +84,12 @@ namespace YC.Azure.WebJobs.Extensions.WorkdayTimers
             }
 
             if (ScheduleStatus == null)
-            {
                 // no schedule status has been stored yet, so initialize
                 ScheduleStatus = new ScheduleStatus
                 {
                     Last = default,
                     Next = _schedule.GetNextOccurrence(now)
                 };
-            }
 
             // 如果是立刻執行或上一次沒執行到, 就立刻執行
             if (isPastDue)
@@ -115,9 +115,8 @@ namespace YC.Azure.WebJobs.Extensions.WorkdayTimers
             ThrowIfDisposed();
 
             if (_timer == null)
-            {
-                throw new InvalidOperationException("The listener has not yet been started or has already been stopped.");
-            }
+                throw new InvalidOperationException(
+                    "The listener has not yet been started or has already been stopped.");
 
             _cancellationTokenSource.Cancel();
 
@@ -137,6 +136,24 @@ namespace YC.Azure.WebJobs.Extensions.WorkdayTimers
             _cancellationTokenSource.Cancel();
         }
 
+        public void Dispose()
+        {
+            if (!_disposed)
+            {
+                _cancellationTokenSource.Cancel();
+
+                if (_timer != null)
+                {
+                    _timer.Dispose();
+                    _timer = null;
+                }
+
+                _invocationLock.Dispose();
+
+                _disposed = true;
+            }
+        }
+
         private void StartTimer(DateTime now)
         {
             var nextInterval = GetNextTimerInterval(ScheduleStatus.Next, now, _schedule.AdjustForDST);
@@ -144,14 +161,14 @@ namespace YC.Azure.WebJobs.Extensions.WorkdayTimers
         }
 
         /// <summary>
-        /// Calculate the next timer interval based on the current (Local) time.
+        ///     Calculate the next timer interval based on the current (Local) time.
         /// </summary>
         /// <remarks>
-        /// We calculate based on the current time because we don't know how long
-        /// the previous function invocation took. Example: if you have an hourly timer
-        /// invoked at 12:00 and the invocation takes 1 minute, we want to calculate
-        /// the interval for the next timer using 12:01 rather than at 12:00. Otherwise, 
-        /// you'd start a 1-hour timer at 12:01 when we really want it to be a 59-minute timer.
+        ///     We calculate based on the current time because we don't know how long
+        ///     the previous function invocation took. Example: if you have an hourly timer
+        ///     invoked at 12:00 and the invocation takes 1 minute, we want to calculate
+        ///     the interval for the next timer using 12:01 rather than at 12:00. Otherwise,
+        ///     you'd start a 1-hour timer at 12:01 when we really want it to be a 59-minute timer.
         /// </remarks>
         /// <param name="next">The next schedule occurrence in Local time.</param>
         /// <param name="now">The current Local time.</param>
@@ -175,10 +192,7 @@ namespace YC.Azure.WebJobs.Extensions.WorkdayTimers
 
             // If the interval happens to be negative (due to slow storage, for example), adjust the
             // interval back up 1 Tick (Zero is invalid for a timer) for an immediate invocation.
-            if (nextInterval <= TimeSpan.Zero)
-            {
-                nextInterval = TimeSpan.FromTicks(1);
-            }
+            if (nextInterval <= TimeSpan.Zero) nextInterval = TimeSpan.FromTicks(1);
 
             return nextInterval;
         }
@@ -187,12 +201,9 @@ namespace YC.Azure.WebJobs.Extensions.WorkdayTimers
         {
             // Restart the timer with the next schedule occurrence, but only 
             // if Cancel, Stop, and Dispose have not been called.
-            if (_cancellationTokenSource.IsCancellationRequested)
-            {
-                return;
-            }
+            if (_cancellationTokenSource.IsCancellationRequested) return;
 
-            _timer = new System.Timers.Timer
+            _timer = new Timer
             {
                 AutoReset = false
             };
@@ -222,7 +233,7 @@ namespace YC.Azure.WebJobs.Extensions.WorkdayTimers
 
         internal async Task HandleTimerEvent()
         {
-            bool timerStarted = false;
+            var timerStarted = false;
 
             try
             {
@@ -243,12 +254,10 @@ namespace YC.Azure.WebJobs.Extensions.WorkdayTimers
                     StartupInvocation = null;
 
                     if (startupInvocation.IsPastDue)
-                    {
                         // invocation is past due
                         await InvokeJobFunction(DateTime.Now,
-                            isPastDue: true,
-                            originalSchedule: startupInvocation.OriginalSchedule);
-                    }
+                            true,
+                            startupInvocation.OriginalSchedule);
                 }
                 else
                 {
@@ -264,15 +273,12 @@ namespace YC.Azure.WebJobs.Extensions.WorkdayTimers
             }
             finally
             {
-                if (!timerStarted)
-                {
-                    StartTimer(DateTime.Now);
-                }
+                if (!timerStarted) StartTimer(DateTime.Now);
             }
         }
 
         /// <summary>
-        /// Invokes the job function.
+        ///     Invokes the job function.
         /// </summary>
         /// <param name="invocationTime">The time of the invocation, likely DateTime.Now.</param>
         /// <param name="isPastDue">True if the invocation is because the invocation is due to a past due timer.</param>
@@ -286,10 +292,7 @@ namespace YC.Azure.WebJobs.Extensions.WorkdayTimers
 
                 // if Cancel, Stop, or Dispose have been called, skip the invocation
                 // since we're stopping the listener
-                if (_cancellationTokenSource.IsCancellationRequested)
-                {
-                    return;
-                }
+                if (_cancellationTokenSource.IsCancellationRequested) return;
 
                 var token = _cancellationTokenSource.Token;
 
@@ -300,15 +303,9 @@ namespace YC.Azure.WebJobs.Extensions.WorkdayTimers
                 // Build up trigger details that will be logged if the timer is running at a different time 
                 // than originally scheduled.
                 var details = new Dictionary<string, string>();
-                if (isPastDue)
-                {
-                    details[UnscheduledInvocationReasonKey] = "IsPastDue";
-                }
+                if (isPastDue) details[UnscheduledInvocationReasonKey] = "IsPastDue";
 
-                if (originalSchedule.HasValue)
-                {
-                    details[OriginalScheduleKey] = originalSchedule.Value.ToString("o");
-                }
+                if (originalSchedule.HasValue) details[OriginalScheduleKey] = originalSchedule.Value.ToString("o");
 
                 var input = new TriggeredFunctionData
                 {
@@ -331,10 +328,7 @@ namespace YC.Azure.WebJobs.Extensions.WorkdayTimers
                 // Without this, it's possible to set the 'Next' value to the same time twice in a row, 
                 // which results in duplicate triggers if the site restarts.
                 var adjustedInvocationTime = invocationTime;
-                if (!isPastDue && ScheduleStatus?.Next > invocationTime)
-                {
-                    adjustedInvocationTime = ScheduleStatus.Next;
-                }
+                if (!isPastDue && ScheduleStatus?.Next > invocationTime) adjustedInvocationTime = ScheduleStatus.Next;
 
                 // Create the Last value with the adjustedInvocationTime; otherwise, the listener will
                 // consider this a schedule change when the host next starts.
@@ -360,30 +354,7 @@ namespace YC.Azure.WebJobs.Extensions.WorkdayTimers
 
         private void ThrowIfDisposed()
         {
-            if (_disposed)
-            {
-                throw new ObjectDisposedException(null);
-            }
-        }
-
-        private bool _disposed;
-
-        public void Dispose()
-        {
-            if (!_disposed)
-            {
-                _cancellationTokenSource.Cancel();
-
-                if (_timer != null)
-                {
-                    _timer.Dispose();
-                    _timer = null;
-                }
-
-                _invocationLock.Dispose();
-
-                _disposed = true;
-            }
+            if (_disposed) throw new ObjectDisposedException(null);
         }
 
         internal class StartupInvocationContext

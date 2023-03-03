@@ -14,14 +14,13 @@ namespace YC.Azure.WebJobs.Extensions.WorkdayTimers
 {
     public class WorkdayTimerTriggerBinding : ITriggerBinding
     {
-        private readonly ParameterInfo _parameter;
         private readonly WorkdayTimerTriggerAttribute _attribute;
-        private readonly TimerSchedule _schedule;
-        private readonly WorkdayTimersOptions _options;
         private readonly ILogger _logger;
+        private readonly WorkdayTimersOptions _options;
+        private readonly ParameterInfo _parameter;
+        private readonly TimerSchedule _schedule;
         private readonly ScheduleMonitor _scheduleMonitor;
         private readonly string _timerName;
-        private readonly IReadOnlyDictionary<string, Type> _bindingContract;
 
         public WorkdayTimerTriggerBinding(ParameterInfo parameter,
             WorkdayTimerTriggerAttribute attribute,
@@ -36,7 +35,7 @@ namespace YC.Azure.WebJobs.Extensions.WorkdayTimers
             _options = options ?? throw new ArgumentNullException(nameof(options));
             _logger = logger;
             _scheduleMonitor = scheduleMonitor ?? throw new ArgumentNullException(nameof(scheduleMonitor));
-            _bindingContract = CreateBindingDataContract();
+            BindingDataContract = CreateBindingDataContract();
 
             var methodInfo = (MethodInfo) parameter.Member;
             _timerName = $"{methodInfo.DeclaringType.FullName}.{methodInfo.Name}";
@@ -49,48 +48,48 @@ namespace YC.Azure.WebJobs.Extensions.WorkdayTimers
             {
                 ScheduleStatus status = null;
                 if (_attribute.UseMonitor && _scheduleMonitor != null)
-                {
                     status = await _scheduleMonitor.GetStatusAsync(_timerName);
-                }
 
                 timerInfo = new TimerInfo(_schedule, status);
             }
 
             IValueProvider valueProvider = new ValueProvider(timerInfo);
-            IReadOnlyDictionary<string, object> bindingData = CreateBindingData();
+            var bindingData = CreateBindingData();
 
             return new TriggerData(valueProvider, bindingData);
         }
 
         public Task<IListener> CreateListenerAsync(ListenerFactoryContext context)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            if (context == null) throw new ArgumentNullException(nameof(context));
 
             return Task.FromResult<IListener>(new WorkdayTimerListener(
-                _attribute, 
-                _schedule, 
-                _timerName, 
-                _options, 
-                context.Executor, 
-                _logger, 
-                _scheduleMonitor, 
+                _attribute,
+                _schedule,
+                _timerName,
+                _options,
+                context.Executor,
+                _logger,
+                _scheduleMonitor,
                 context.Descriptor?.LogName));
         }
 
         public ParameterDescriptor ToParameterDescriptor()
         {
-            return new ParameterDescriptor()
+            return new ParameterDescriptor
             {
                 Name = _parameter.Name,
-                DisplayHints = new ParameterDisplayHints()
+                DisplayHints = new ParameterDisplayHints
                 {
                     Description = $"Timer executed on schedule ({_schedule})"
                 }
             };
         }
+
+        public Type TriggerValueType => typeof(TimerInfo);
+
+
+        public IReadOnlyDictionary<string, Type> BindingDataContract { get; }
 
         private IReadOnlyDictionary<string, Type> CreateBindingDataContract()
         {
@@ -111,11 +110,6 @@ namespace YC.Azure.WebJobs.Extensions.WorkdayTimers
 
             return bindingData;
         }
-
-        public Type TriggerValueType => typeof(TimerInfo);
-
-
-        public IReadOnlyDictionary<string, Type> BindingDataContract => _bindingContract;
 
 
         private class ValueProvider : IValueProvider

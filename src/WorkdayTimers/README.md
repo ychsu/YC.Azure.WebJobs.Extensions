@@ -1,11 +1,15 @@
 ## YC.Azure.WebJobs.Extensions.WorkdayTimers
+
 ### Installation
+
 Nuget
+
 ```
 Install-Package YC.Azure.WebJobs.Extensions.WorkdayTimers
 ```
 
 dotnet cli
+
 ```
 dotnet add package YC.Azure.WebJobs.Extensions.WorkdayTimers
 ```
@@ -13,6 +17,7 @@ dotnet add package YC.Azure.WebJobs.Extensions.WorkdayTimers
 ### Using the binding
 
 #### Configure
+
 ```csharp
 var builder = new HostBuilder();
 builder
@@ -39,6 +44,7 @@ internal CustomWorkdayFilter : WorkdayFilter
 ```
 
 #### samples
+
 ```csharp
 public void Test([WorkdayTimerTrigger("0 0 12 * * *")] TimerInfo info)
 {

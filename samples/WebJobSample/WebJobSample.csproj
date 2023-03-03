@@ -1,25 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\EntityFrameworkCore\YC.Azure.WebJobs.Extensions.EntityFrameworkCore.csproj" />
-    <ProjectReference Include="..\..\src\NotificationHub\YC.Azure.WebJobs.Extensions.NotificationHub.csproj" />
-    <ProjectReference Include="..\..\src\WorkdayTimers\YC.Azure.WebJobs.Extensions.WorkdayTimers.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\EntityFrameworkCore\YC.Azure.WebJobs.Extensions.EntityFrameworkCore.csproj"/>
+        <ProjectReference Include="..\..\src\NotificationHub\YC.Azure.WebJobs.Extensions.NotificationHub.csproj"/>
+        <ProjectReference Include="..\..\src\WorkdayTimers\YC.Azure.WebJobs.Extensions.WorkdayTimers.csproj"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="4.0.1" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="4.0.1"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <None Update="appsettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+    <ItemGroup>
+        <None Update="appsettings.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
-    <UserSecretsId>26ecd946-e012-42d8-ad20-9e69f905ed88</UserSecretsId>
-  </PropertyGroup>
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net7.0</TargetFramework>
+        <UserSecretsId>26ecd946-e012-42d8-ad20-9e69f905ed88</UserSecretsId>
+    </PropertyGroup>
 
 </Project>
