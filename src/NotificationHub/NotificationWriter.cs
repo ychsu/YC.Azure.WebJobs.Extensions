@@ -36,15 +36,9 @@ namespace YC.Azure.WebJobs.Extensions.NotificationHub
 
         private async Task SendNotificationAsync(NotificationMessage message, CancellationToken cancellationToken)
         {
-            Notification msg = message.Platform switch
-            {
-                Platform.Fcm => new FcmNotification(message.Payload),
-                Platform.Apple => new AppleNotification(message.Payload),
-                _ => throw new ArgumentOutOfRangeException()
-            };
             try
             {
-                await _hubClient.SendNotificationAsync(msg, message.TagExpression, cancellationToken);
+                await _hubClient.SendNotificationAsync(message.Notification, message.TagExpression, cancellationToken);
             }
             catch (Exception e)
             {

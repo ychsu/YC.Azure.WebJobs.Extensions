@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.Azure.NotificationHubs;
 using Microsoft.Azure.WebJobs;
 using YC.Azure.WebJobs.Extensions.NotificationHub;
 using YC.Azure.WebJobs.Extensions.WorkdayTimers;
@@ -14,8 +15,7 @@ public class Function
     {
         return new NotificationMessage
         {
-            Platform = Platform.Apple,
-            Payload = @"{ ""aps"": { ""alert"": ""test"", ""badge"": 90 } }",
+            Notification = new AppleNotification(@"{ ""aps"": { ""alert"": ""test"", ""badge"": 90 } }"),
             TagExpression = "user_3"
         };
     }
@@ -31,8 +31,7 @@ public class Function
     {
         return new NotificationMessage
         {
-            Platform = Platform.Apple,
-            Payload = @"{ ""aps"": { ""alert"": ""test"", ""badge"": 90 } }",
+            Notification = new AppleNotification(@"{ ""aps"": { ""alert"": ""test"", ""badge"": 90 } }"),
             TagExpression = "user_3"
         };
     }
@@ -49,14 +48,12 @@ public class Function
     {
         await messages.AddAsync(new NotificationMessage
         {
-            Platform = Platform.Apple,
-            Payload = @"{ ""aps"": { ""alert"": ""test"" } }",
+            Notification = new AppleNotification(@"{ ""aps"": { ""alert"": ""test"" } }"),
             TagExpression = "zh"
         });
         await messages.AddAsync(new NotificationMessage
         {
-            Platform = Platform.Apple,
-            Payload = @"{ ""aps"": { ""alert"": ""test"" } }",
+            Notification = new AppleNotification(@"{ ""aps"": { ""alert"": ""test"" } }"),
             TagExpression = "en"
         });
     }
@@ -73,14 +70,12 @@ public class Function
     {
         await messages.AddAsync(new NotificationMessage
         {
-            Platform = Platform.Apple,
-            Payload = @"{ ""aps"": { ""alert"": ""test"" } }",
+            Notification = new AppleNotification(@"{ ""aps"": { ""alert"": ""test"" } }"),
             TagExpression = "zh"
         });
         await messages.AddAsync(new NotificationMessage
         {
-            Platform = Platform.Apple,
-            Payload = @"{ ""aps"": { ""alert"": ""test"" } }",
+            Notification = new AppleNotification(@"{ ""aps"": { ""alert"": ""test"" } }"),
             TagExpression = "en"
         });
     }

@@ -103,8 +103,7 @@ public async Task Test([TimerTrigger("*/5 * * * * *")] TimerInfo info,
 	[Notification] IAsyncCollector<NotificationMessagge> collector)
 {
   await collector.AddAsync(new () {
-    Platform = Platform.Apple,
-    Payload = @"{ ""aps"": { ""alert"": ""test"", ""badge"": 90 } }"
+    Notification = new AppleNotification(@"{ ""aps"": { ""alert"": ""test"", ""badge"": 90 } }")
   });
 }
 
@@ -113,8 +112,7 @@ public NotificationMessagge Test2([TimerTrigger("*/8 * * * * *")] TimerInfo info
 {
   return new()
   {
-    Platform = Platform.Apple,
-    Payload = @"{ ""aps"": { ""alert"": ""test"", ""badge"": 90 } }"
+    Notification = new AppleNotification(@"{ ""aps"": { ""alert"": ""test"", ""badge"": 90 } }")
   };
 }
 ```
