@@ -16,7 +16,6 @@ internal class Program
         builder
             .ConfigureWebJobs(b =>
             {
-                b.AddAzureStorageCoreServices();
                 b.AddTimers();
                 b.AddNotificationHub();
                 b.AddEntityFrameworkCore();

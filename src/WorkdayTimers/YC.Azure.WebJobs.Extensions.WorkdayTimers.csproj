@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.1</TargetFramework>
         <Authors>ychsu.tw</Authors>
         <Description>工作天 timer trigger</Description>
         <PackageProjectUrl>https://github.com/ychsu/YC.Azure.WebJobs.Extensions</PackageProjectUrl>
@@ -9,17 +8,18 @@
         <Product>YC.Azure.WebJobs.Extensions.WorkdaysTimer</Product>
         <PackageId>YC.Azure.WebJobs.Extensions.WorkdaysTimer</PackageId>
         <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-        <PackageReleaseNotes>工作天 timer trigger</PackageReleaseNotes>
-        <Version>1.0.1</Version>
-        <PackageVersion>1.0.1-alpha</PackageVersion>
+        <PackageReleaseNotes>修改套件相依設定</PackageReleaseNotes>
+        <Version>1.0.2</Version>
+        <PackageVersion>1.0.2</PackageVersion>
         <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
         <Company>ychsu.tw</Company>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+        <TargetFramework>netstandard2.1</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="4.0.1"/>
+        <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="5.*" />
     </ItemGroup>
 
     <ItemGroup>
